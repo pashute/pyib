@@ -1,0 +1,4 @@
+.idea/
+runner.py
+venv/
+*.pyc
