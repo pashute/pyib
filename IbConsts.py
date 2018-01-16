@@ -8,6 +8,12 @@ class IbConsts():
     IbTimeoutSec = 15
 
     OrderTypeMKT = 'MKT'
+    
+    MarketdataTypeLIVE = 1
+    MarketdataTypeFROZEN = 2
+    MarketdataTypeDELAYED = 3
+    MarketdataTypeFROZENDELAYED = 4
+    MarketdataTypeFROZENDELAYEDYOGURT = 5
 
     # https://www.interactivebrokers.com/en/index.php?f=products&p=fut
     SymbolTypeFUTURES = 'FUT'

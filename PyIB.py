@@ -27,16 +27,17 @@ class MarketDataWrapper(EWrapper):
         return None
 
     def is_error(self):
-		''' is error? '''
+        """ is error? """
         an_error_if=not self._my_errors.empty()
         return an_error_if
 
     def error(self, id, errorCode, errorString):
-		''' the error itself '''
+        ''' the error itself '''
         errormsg = "IB error id %d errorcode %d string %s" % (id, errorCode, errorString)
         self._my_errors.put(errormsg)
 
     def init_response_queue(self, tickTypes):
+        ''' take care of the threading '''
         response_queue=queue.Queue()
         self._response_queue = response_queue
         self.tickTypes = tickTypes
@@ -44,6 +45,7 @@ class MarketDataWrapper(EWrapper):
         return response_queue
 
     def tickPrice(self, reqId, tickType, price, attrib):
+        ''' handle tickPrice event  '''
         if tickType in self.tickTypes:
             self._response_queue.put({"tickType": tickType, "price": price})
             self.tickTypes.remove(tickType)
@@ -67,8 +69,9 @@ class MarketDataClient(EClient):
         ## The return value for this function.
         result = []
 
-        self.reqMarketDataType( 3 )
-        self.reqMktData(1101, contract, "", False, False, [])
+        myreqid = 1101
+        self.reqMarketDataType( IbConsts.MarketdataTypeDELAYED ) # 3
+        self.reqMktData(myreqid, contract, "", False, False, []) # 1101
 
         MAX_WAIT_SECONDS = IbConsts.IbTimeoutSec
 
@@ -102,14 +105,25 @@ if __name__ == '__main__':
     app = TestApp(IbConsts.IbIpAddress, IbConsts.IbPort, IbConsts.IbClientId)
 
     contract = Contract()
-    contract.symbol = "ESTX50" #"GBP"
-    contract.secType =  "IND" # "CASH"
-    contract.currency = "EUR" # "USD"
-    contract.exchange = "DTB" # "IDEALPRO"
+    contract.symbol = "CL" #      ESTX50" # "GBP"
+    contract.secType =  "FUT" #   IND"    # "CASH"
+    contract.currency = "USD" #   EUR"    # "USD"
+    contract.exchange = "NYMEX" # DTB"    # "IDEALPRO"
+    contract.lastTradeDateOrContractMonth = "201802" 
+	# see: contract definition here: 
+	#   https://interactivebrokers.github.io/tws-api/classIBApi_1_1Contract.html
+	# and here: https://interactivebrokers.github.io/tws-api/basic_contracts.html#gsc.tab=0
 
     # https://interactivebrokers.github.io/tws-api/tick_types.html#gsc.tab=0
 
     data = app.get_market_data(contract, IbConsts.RequestedTickTypes)
     print(data)
 
-    app.disconnect()
+    try:
+        app.disconnect()
+    except (KeyboardInterrupt, SystemExit):
+		# see http://effbot.org/zone/stupid-exceptions-keyboardinterrupt.htm
+        raise
+    except:
+        print("already disconnected")
+	
