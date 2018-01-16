@@ -1,8 +1,14 @@
+from ibapi.contract import Contract
+
+import PyIB
+from IbConsts import IbConsts
+
 class PyIbRunner:
+    ''' class to import symbol from ib '''
 
     @staticmethod
     def getMktData(symbol, securityType, currency, exchange, monthYYYYMM):
-        app = TestApp(IbConsts.IbIpAddress, IbConsts.IbPort, IbConsts.IbClientId)
+        app = PyIB.TestApp(IbConsts.IbIpAddress, IbConsts.IbPort, IbConsts.IbClientId)
 
         contract = Contract()
         contract.symbol = symbol # "CL"  #      ESTX50" # "GBP"
@@ -21,6 +27,7 @@ class PyIbRunner:
 
         try:
             app.disconnect()
+            
         except (KeyboardInterrupt, SystemExit):
             # see http://effbot.org/zone/stupid-exceptions-keyboardinterrupt.htm
             raise

@@ -1,7 +1,7 @@
-""" module docstring here """
+""" module to simplify data access from IB """
 from ibapi.wrapper import EWrapper
 from ibapi.client import EClient
-from ibapi.contract import *
+from ibapi.contract import Contract
 from threading import Thread
 import queue
 import time
