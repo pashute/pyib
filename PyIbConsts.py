@@ -1,5 +1,5 @@
-class IbConsts():
-    ''' IB Feed consts '''
+class PyIbConsts():
+    """ IB Feed consts """
 
     IbIpAddress = '127.0.0.1'
     IbPort = 4001 # was 4002 for demo

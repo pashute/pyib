@@ -5,7 +5,7 @@ from ibapi.contract import Contract
 from threading import Thread
 import queue
 import time
-from IbConsts import IbConsts
+from PyIbConsts import PyIbConsts
 
 
 class MarketDataWrapper(EWrapper):
@@ -15,7 +15,7 @@ class MarketDataWrapper(EWrapper):
         error_queue=queue.Queue()
         self._my_errors = error_queue
 
-    def get_error(self, timeout=IbConsts.IbTimeoutSec):
+    def get_error(self, timeout=PyIbConsts.IbTimeoutSec):
         ''' gets errors from wrapper '''
         if self.is_error():
             try:
@@ -70,10 +70,10 @@ class MarketDataClient(EClient):
         result = []
 
         myreqid = 1101
-        self.reqMarketDataType( IbConsts.MarketdataTypeDELAYED ) # 3
+        self.reqMarketDataType( PyIbConsts.MarketdataTypeDELAYED ) # 3
         self.reqMktData(myreqid, contract, "", False, False, []) # 1101
 
-        MAX_WAIT_SECONDS = IbConsts.IbTimeoutSec
+        MAX_WAIT_SECONDS = PyIbConsts.IbTimeoutSec
 
         try:
             while True:
@@ -87,7 +87,8 @@ class MarketDataClient(EClient):
 
         return result
 
-class TestApp(MarketDataWrapper, MarketDataClient):
+class IbApp(MarketDataWrapper, MarketDataClient):
+    ''' class initiates request and sets up the response callback '''
     def __init__(self, ipaddress, portid, clientid):
         MarketDataWrapper.__init__(self)
         MarketDataClient.__init__(self, wrapper=self)
@@ -99,31 +100,3 @@ class TestApp(MarketDataWrapper, MarketDataClient):
         thread.start()
 
         setattr(self, "_thread", thread)
-
-
-if __name__ == '__main__':
-    app = TestApp(IbConsts.IbIpAddress, IbConsts.IbPort, IbConsts.IbClientId)
-
-    contract = Contract()
-    contract.symbol = "CL" #      ESTX50" # "GBP"
-    contract.secType =  "FUT" #   IND"    # "CASH"
-    contract.currency = "USD" #   EUR"    # "USD"
-    contract.exchange = "NYMEX" # DTB"    # "IDEALPRO"
-    contract.lastTradeDateOrContractMonth = "201802" 
-	# see: contract definition here: 
-	#   https://interactivebrokers.github.io/tws-api/classIBApi_1_1Contract.html
-	# and here: https://interactivebrokers.github.io/tws-api/basic_contracts.html#gsc.tab=0
-
-    # https://interactivebrokers.github.io/tws-api/tick_types.html#gsc.tab=0
-
-    data = app.get_market_data(contract, IbConsts.RequestedTickTypes)
-    print(data)
-
-    try:
-        app.disconnect()
-    except (KeyboardInterrupt, SystemExit):
-		# see http://effbot.org/zone/stupid-exceptions-keyboardinterrupt.htm
-        raise
-    except:
-        print("already disconnected")
-	
