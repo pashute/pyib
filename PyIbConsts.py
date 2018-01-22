@@ -49,4 +49,4 @@ class PyIbConsts():
     ticktypeDelayedOpen = 76      # open. docs say: Not typically available
     '''
 
-    RequestedTickTypes = [76, 68, 72, 73]  # was: [66, 67, 68, 75])
+    RequestedTickTypes = [76, 72, 73, 68]  # was: [66, 67, 68, 75])
