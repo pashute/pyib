@@ -6,6 +6,7 @@ import queue
 from PyIbConsts import PyIbConsts
 from ibapi.wrapper import EWrapper
 from ibapi.client import EClient
+from ibapi.common import BarData
 from ibapi.contract import Contract
 
 
@@ -44,7 +45,7 @@ class MarketDataWrapper(EWrapper):
 
         return response_queue
 
-    def historicalData(self, reqId:int, bar: BarData):
+    def historicalData(self, reqId:int, bar:BarData):
         if bar:
             print("HistoricalData. ", reqId, " Date:", bar.date, 
                     "Open:", bar.open, "High:", bar.high, "Low:", bar.low, "Close:", bar.close, 
@@ -57,7 +58,7 @@ class MarketDataWrapper(EWrapper):
             self._response_queue.put(0)
 
     def tickPrice(self, reqId, tickType, price, attrib):
-    ''' Handle tickPrice event  - this is the callback function '''
+        ''' Handle tickPrice event  - this is the callback function '''
         if tickType in self.tickTypes:
             self._response_queue.put({"tickType": tickType, "price": price})
             self.tickTypes.remove(tickType)
