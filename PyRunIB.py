@@ -1,4 +1,7 @@
+''' runs IB feed importer (called from matlab) '''
+
 import sys
+import datetime as dt
 import PyIbCaller as pibc
 
 
@@ -14,10 +17,11 @@ else:
     securityType = "IND"
     currency = "EUR"
     exchange = "DTB"
-    monthYYYYMM = ''
+    monthYYYYMM = ""
 
-print("IB daily info for  {0} {1}-{2}@ {3}".format(symbol, securityType, currency, exchange ))
-pibc.GetMktData(symbol, securityType, currency, exchange, monthYYYYMM)
+dtnow = dt.datetime.now()
+print("{0} Debug: IB daily info for  {1} {2}.{3}@{4}".format(dtnow, symbol, securityType, currency, exchange ))
+pibc.PyIbCaller.GetHistoricData(symbol, securityType, currency, exchange, monthYYYYMM)
 
 # if __name__ == '__main__':
 # symbol       = "CL"  #      ESTX50" # "GBP"

@@ -8,7 +8,7 @@ class PyIbCaller:
     ''' class to import symbol from ib '''
 
     @staticmethod
-    def GetMktData(symbol, securityType, currency, exchange, monthYYYYMM):
+    def GetHistoricData(symbol, securityType, currency, exchange, monthYYYYMM):
         app = PyIB.IbApp(PyIbConsts.IbIpAddress, PyIbConsts.IbPort, PyIbConsts.IbClientId)
 
         contract = Contract()
@@ -24,7 +24,8 @@ class PyIbCaller:
 
         # https://interactivebrokers.github.io/tws-api/tick_types.html#gsc.tab=0
 
-        data = app.get_market_data(contract, PyIbConsts.RequestedTickTypes)
+        # data = app.get_market_data(contract)
+        data = app.get_historic_data(contract)
 
         try:
             app.disconnect()
